@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configuration: 로그 설정을 위한 최상위 요소 -->
+<!-- status 속성: Log4j2 내부의 동작에 대한 로깅 레벨을 설정 (log4j 내부 문제를 해결하기 위한 용도의 로깅이 필요한 경우 사용) -->
+<!-- TRACE > DEBUG > INFO > WARN > ERROR -->
+<Configuration status="WARN">
+
+    <!-- Properties: 하단 설정에 사용할 변수들을 정의 -->
+    <!-- name: 위 예제에서 name=”LOG_PATTERN”으로 설정하여 LOG_PATTERN이라는 변수를 정의 -->
+    <!-- <Properties>
+        <Property name="LOG_PATTERN">%d{HH:mm:ss.SSSZ} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties> -->
+
+    <!-- Appenders: 로그가 출력되는 위치 -->
+    <Appenders>
+        <!-- Console: 콘솔에 출력될 로그 설정, name: 어펜더의 이름, target: 로그 타겟 (default: SYSTEM_OUT) -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <!-- PatternLayout: 로그의 패턴을 설정 -->
+            <!-- <PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/> -->
+            <PatternLayout
+                pattern="%style{%d{yyyy-MM-dd E HH:mm:ss.SSS}}{bright,black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{0}}{bright,yellow}: %msg%n%throwable" disableAnsi = "false" />
+        </Console>
+    </Appenders>
+
+    <!-- Loggers: 로깅 작업의 주체로 각 패키지 별로 다양한 설정 -->
+    <!-- Logger: 패키지 단위로 로그 설정 -->
+    <Loggers>
+
+        <!-- 기본(디폴트) loger 설정: 전체 디폴트 로그는 ROOT로 INFO 이상의 메세지만 출력하고 따로 파일로 저장하지는 않는다. -->
+        <!-- Root: 모든 패키지에 대한 로깅을 하기 위한 일반적인 로그 정책 설정 (한 개만 설정할 수 있음) -->
+        <!-- level: 해당 패키지의 로그 레벨 설정 -->
+        <Root level="INFO">
+            <!-- AppenderRef: 상단에 설정한 Appender를 참조 -->
+            <AppenderRef ref="Console"/>
+        </Root>
+        <!-- org.springframework 패키지에 로그는 WARN 이상만 표시하고 저장하지는 않는다. -->
+        <!-- name: 이름에 패키지 경로를 설정 -->
+        <Logger name="org.springframework" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- 프로그래머가 생성하는 com.mobigen 패키지에서는 DEBUG 이상을 출력하고 출력된 로그를 저장 -->
+        <Logger name="com.mobigen" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- 아래 동작하지 않음.... How to disable 'RMI TCP Connection(2)-127.0.0.1' logging...-->
+        <!-- RMI 관련 로그 필터링 (특정 로그 제외) -->
+        <!-- <Logger name="org.apache.rmi" level="off" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger> -->
+        <!-- DirectJDKLog 로그 제외 -->
+        <!-- <Logger name="org.apache.logging.log4j.jdk.DirectJDKLog" level="off" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger> -->
+
+    </Loggers>
+</Configuration>
