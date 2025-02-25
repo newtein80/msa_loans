@@ -1,0 +1,169 @@
+# spring.sql.init.platform=mysql
+# spring.datasource.url=jdbc:mysql://192.168.100.221:30206/lecture?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+# spring.datasource.username=root
+# spring.datasource.password=root1
+# spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+# spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+spring:
+  main:
+    banner-mode: off
+  output:
+    ansi:
+      enabled: always
+  profiles:
+    # 활성화 할 properties 파일명 (application-[이름].properties 파일 활성화)
+    active: h2
+  # application 설정
+  application:
+    name: accounts
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+  sql:
+    init:
+      platform: h2
+      mode: always
+      schema-locations: classpath:db/h2/schema.sql
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+  h2:
+    # h2 데이터베이스 url 및 접근
+    console:
+      path: /h2
+      settings:
+        web-allow-others: true
+  # jpa 설정
+  jpa:
+    show-sql: true
+    hibernate:
+      #   spring.jpa.hibernate.dll-auto : create, create-drop, update, validate, none 옵션을 설정
+      #   create : JPA가 DB와 상호작용할 때 기존에 있던 스키마(테이블)을 삭제하고 새로 만드는 것 (주의)
+      #   create-drop : JPA 종료 시점에 기존에 있었던 테이블을 삭제 (주의)
+      #   update : JPA에 의해 변경된 부분만 반영
+      #   validate : 엔티티와 테이블이 정상 매핑되어 있는지만 검증
+      #   none : 초기화 동작 미사용
+      ddl-auto: update
+      # Naming 전략: @Entity 에 테이블명일 지정되지 않은 경우(implicit)와 지정된 경우(physical)에 Database 에서 생성될 테이블,컬럼 명명 전략
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImpl
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    # jpa 사용시 로그에 쿼리 출력과 관련된 설정
+    properties:
+      '[format_sql]': true
+      '[highlight_sql]': true
+      '[use_sql_comments]': true
+    database-platform: org.hibernate.dialect.H2Dialect
+  config:
+    import: optional:configserver:http://localhost:8071
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+# server.port를 0으로 설정할 경우 '사용가능 한 랜덤'포트를 부여한다. eureka에 등록된 api를 가지고 gateway를 통해서 들어오기때문에 server.port는 어느것으로 부여되어도 상관없다.
+# server.port=0
+# eureka 에 등록되는 app 이름 (같은 이름으로 등록되어야 하나의 그룹으로 묶임)
+server:
+  port: 8803
+  error:
+    include-stacktrace: always
+    whitelabel:
+      enabled: false
+
+  servlet:
+    # Encoding UTF-8
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+# Swagger 설정
+springdoc:
+  default-consumes-media-type: application/json,application/x-www-form-urlencoded
+  default-produces-media-type: application/json
+  # 특정 경로만 선택적으로 Swagger UI에 노출하고 싶을 때 사용
+  paths-to-match: "/**"
+  swagger-ui:
+    # Swagger UI 활성화 여부
+    enabled: true
+    # 정렬 순서: alpha (알파벳순), method (HTTP 메서드순)
+    operations-sorter: alpha
+    # 태그의 정렬 기준을 설정: alpha (알파벳순), default (작성된 순서)
+    tags-sorter: alpha
+    # Swagger UI의 접근 경로
+    path: /swagger-ui.html
+    # 요청의 소요 시간을 Swagger UI에 표시할지 여부를 설정
+    display-request-duration: true
+    disable-swagger-default-url: true
+  api-docs:
+    # OpenAPI 문서 생성 기능을 활성화하거나 비활성화
+    enabled: true
+    version: OPENAPI_3_0
+    # OpenAPI 문서를 제공하는 기본 경로를 설정
+    path: /v3/api-docs
+
+# logging 설정
+logging:
+  config: classpath:log4j2.xml
+# logging.pattern.console=%clr(%d{yy-MM-dd E HH:mm:ss.SSS}){green} %highlight([%-5level]) %clr(%logger{1.}){faint} %clr(:){red} %clr(%m){cyan}%n
+# logging.pattern.conversion.class=ch.qos.logback.classic.pattern.ClassNameOnlyConverter
+
+
+eureka:
+  instance:
+    # ip와 랜덤문자열을 통해서 id 설정(server.port=0 사용시 동일한 id가 생성되어 random 사용)
+    instance-id: "${spring.cloud.client.ip-address}:${random.value}"
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+
+# ==== spring actuator properties ====
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    shutdown:
+      access: unrestricted
+    health:
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+# spring security 관련 설정
+# @EnableWebSecurity(debug = true) 과 같이 쓰여야 함
+# logging.level.org.springframework.security.web.FilterChainProxy=DEBUG
+# CommonsRequestLoggingFilter 사용
+# logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
+
+build:
+  version: "3.0_classpath"
+
+loans:
+  message: "Welcome to EazyBank loans related local APIs "
+  contactDetails:
+    name: "Amaal Grega - Developer"
+    email: "amaal@eazybank.com"
+  onCallSupport:
+    - (452) 456-2176
+    - (546) 764-8934
