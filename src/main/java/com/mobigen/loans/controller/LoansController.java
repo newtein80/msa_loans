@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mobigen.loans.constants.LoansConstants;
 import com.mobigen.loans.dto.ErrorResponseDto;
+import com.mobigen.loans.dto.LoansContactInfoDto;
 import com.mobigen.loans.dto.LoansDto;
 import com.mobigen.loans.dto.ResponseDto;
 import com.mobigen.loans.service.ILoansService;
@@ -46,6 +47,8 @@ public class LoansController {
 
     private ILoansService iLoansService;
 
+    private LoansContactInfoDto loansContactInfoDto;
+    
     @Operation(summary = "Gateway check REST API", description = "REST API to check API-Gateway")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
@@ -184,6 +187,31 @@ public class LoansController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDto(LoansConstants.STATUS_417, LoansConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    @Operation(
+            summary = "Get Contact Info",
+            description = "Contact Info details that can be reached out in case of any issues"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @GetMapping("/contact-info")
+    public ResponseEntity<LoansContactInfoDto> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(loansContactInfoDto);
     }
 
 }
