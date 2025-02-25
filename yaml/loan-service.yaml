@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-loan-app
+  namespace: group1-team2
+spec:
+  selector:
+    app: d-group1-team2-loan
+  ports:
+    - protocol: TCP
+      port: 8803
+      targetPort: 8803
+      nodePort: 30213
+  type: NodePort

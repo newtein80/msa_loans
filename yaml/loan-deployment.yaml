@@ -1,0 +1,22 @@
+# springboot-app.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-loan-app
+  namespace: group1-team2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: d-group1-team2-loan
+  template:
+    metadata:
+      labels:
+        app: d-group1-team2-loan
+    spec:
+      containers:
+      - name: container-loan-app
+        image: k8s-vga-worker1:5000/group1-team2-loan-app
+        imagePullPolicy: Always #IfNotPresent
+        ports:
+        - containerPort: 8803
