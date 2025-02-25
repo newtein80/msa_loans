@@ -1,5 +1,7 @@
 package com.mobigen.loans.controller;
 
+import java.net.InetAddress;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -56,9 +58,15 @@ public class EnvController {
     )
     @GetMapping("/build-info")
     public ResponseEntity<String> getBuildInfo() {
+        String hostname = "null";
+        try {
+			hostname = InetAddress.getLocalHost().getHostName().toString();
+        } catch (Exception e) {
+			log.error(e.getMessage());
+        }
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(buildVersion);
+                .body(buildVersion + "::" + hostname);
     }
 
     @Operation(
