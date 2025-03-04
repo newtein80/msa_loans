@@ -13,10 +13,10 @@ spring:
       enabled: always
   profiles:
     # 활성화 할 properties 파일명 (application-[이름].properties 파일 활성화)
-    active: h2
+    active: qa
   # application 설정
   application:
-    name: accounts
+    name: loans
   devtools:
     livereload:
       enabled: true

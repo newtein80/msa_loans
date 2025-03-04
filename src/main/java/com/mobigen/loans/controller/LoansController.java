@@ -1,5 +1,6 @@
 package com.mobigen.loans.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +48,7 @@ public class LoansController {
 
     private ILoansService iLoansService;
 
+    @Autowired
     private LoansContactInfoDto loansContactInfoDto;
     
     @Operation(summary = "Gateway check REST API", description = "REST API to check API-Gateway")

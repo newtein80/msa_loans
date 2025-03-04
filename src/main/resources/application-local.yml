@@ -1,0 +1,19 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:8071
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+eureka:
+  instance:
+    # ip와 랜덤문자열을 통해서 id 설정(server.port=0 사용시 동일한 id가 생성되어 random 사용)
+    instance-id: "${spring.cloud.client.ip-address}:${random.value}"
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka

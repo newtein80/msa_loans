@@ -22,13 +22,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Tag(name = "Env check for test", description = "Env check for test")
 @RestController
 @RequestMapping(path = "/api/check", produces = { MediaType.APPLICATION_JSON_VALUE })
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 public class EnvController {
 
@@ -64,6 +65,7 @@ public class EnvController {
         } catch (Exception e) {
 			log.error(e.getMessage());
         }
+		log.info("Check hostname: " + hostname);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(buildVersion + "::" + hostname);
